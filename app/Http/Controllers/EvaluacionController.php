@@ -10,7 +10,7 @@ class EvaluacionController extends Controller
     public function index(Request $request)
     {
         $user = $this->currentUser($request);
-        $query = Evaluacion::with('clase');
+        $query = Evaluacion::with('clase.alumno');
 
         if ($user->isInstructor()) {
             $query->whereHas('clase', fn ($clase) => $clase->where('instructor_id', $user->id));
@@ -23,7 +23,7 @@ class EvaluacionController extends Controller
 
     public function show(Request $request, $id)
     {
-        $evaluacion = Evaluacion::with('clase')->findOrFail($id);
+        $evaluacion = Evaluacion::with('clase.alumno')->findOrFail($id);
         $this->ensureClaseAccess($this->currentUser($request), $evaluacion->clase);
 
         return $evaluacion;
@@ -41,7 +41,7 @@ class EvaluacionController extends Controller
 
     public function update(Request $request, $id)
     {
-        $evaluacion = Evaluacion::with('clase')->findOrFail($id);
+        $evaluacion = Evaluacion::with('clase.alumno')->findOrFail($id);
         $this->ensureInstructorOwnsClase($this->currentUser($request), $evaluacion->clase);
         $data = $this->validateEvaluacion($request, $evaluacion);
         $clase = \App\Models\Clase::findOrFail($data['clase_id']);
@@ -53,7 +53,7 @@ class EvaluacionController extends Controller
 
     public function destroy(Request $request, $id)
     {
-        $evaluacion = Evaluacion::with('clase')->findOrFail($id);
+        $evaluacion = Evaluacion::with('clase.alumno')->findOrFail($id);
         $this->ensureInstructorOwnsClase($this->currentUser($request), $evaluacion->clase);
         $evaluacion->delete();
 

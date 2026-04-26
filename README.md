@@ -2,6 +2,10 @@
 
 Sistema de Instruccion y Gestion Automotriz desarrollado con Laravel.
 
+Documentacion completa del proyecto:
+- [docs/PROYECTO.md](/c:/Users/Jony%20Bravo/siga/docs/PROYECTO.md)
+- [docs/PRUEBAS.md](/c:/Users/Jony%20Bravo/siga/docs/PRUEBAS.md)
+
 SIGA permite administrar una escuela de manejo con modulos separados por rol:
 - alumnos
 - clases

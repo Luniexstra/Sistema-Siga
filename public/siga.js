@@ -879,6 +879,147 @@
         return 'text';
     }
 
+    function renderListItems(name, items) {
+        if (!items.length) {
+            return '<p class="siga-log__placeholder">Sin datos disponibles.</p>';
+        }
+
+        return items.slice(0, 15).map(function (item) {
+            if (name === 'evaluaciones') {
+                return cardTemplate(
+                    formatClaseLabel(item),
+                    '<div class="siga-eval-card__summary"><strong>Promedio ' + escapeHtml(String(item.promedio)) + '</strong>' + pill(item.nivel) + '</div>' +
+                    renderTrafficLight(item.nivel) +
+                    renderEvaluacionMetrics(item),
+                    actionButtons(name, item.id)
+                );
+            }
+
+            if (name === 'observaciones') {
+                return cardTemplate(
+                    'Clase ' + item.clase_id,
+                    escapeHtml(item.comentario),
+                    actionButtons(name, item.id)
+                );
+            }
+
+            if (name === 'pagos') {
+                return cardTemplate(
+                    'Alumno ' + escapeHtml(item.alumno ? item.alumno.nombre + ' ' + item.alumno.apellido : String(item.alumno_id)),
+                    '$' + formatMoney(item.monto) + ' Â· ' + pill(item.estado) + ' Â· ' + escapeHtml(item.fecha_pago),
+                    actionButtons(name, item.id)
+                );
+            }
+
+            return '';
+        }).join('');
+    }
+
+    function buildControl(field, value, extra) {
+        if (field.catalog) {
+            const options = state.catalogs[field.catalog] || [];
+            const select = document.createElement('select');
+            select.name = field.key;
+            if (!field.optional) {
+                select.required = true;
+            }
+            select.innerHTML = ['<option value="">Selecciona una opcion</option>'].concat(options.map(function (item) {
+                return '<option value="' + escapeAttribute(String(item.value)) + '"' + (String(item.value) === String(value) ? ' selected' : '') + '>' + escapeHtml(item.label) + '</option>';
+            })).join('');
+            return select.outerHTML;
+        }
+
+        if (field.options) {
+            return '<select name="' + field.key + '"' + extra + '>' + field.options.map(function (option) {
+                return '<option value="' + option + '"' + (String(option) === String(value) ? ' selected' : '') + '>' + option + '</option>';
+            }).join('') + '</select>';
+        }
+
+        if (field.key === 'comentario') {
+            return '<textarea name="' + field.key + '" rows="5"' + extra + '>' + escapeHtml(String(value)) + '</textarea>';
+        }
+
+        if (isEvaluacionMetricField(field.key)) {
+            return buildMetricScaleControl(field.key, value);
+        }
+
+        const type = guessInputType(field.key);
+        return '<input name="' + field.key + '" type="' + type + '" value="' + escapeAttribute(String(value)) + '"' + extra + buildInputAttributes(field.key) + ' />';
+    }
+
+    function isEvaluacionMetricField(key) {
+        return ['senales', 'frenado', 'seguridad'].indexOf(key) !== -1;
+    }
+
+    function buildMetricScaleControl(name, value) {
+        const selectedValue = String(value || '');
+        const levels = [
+            { value: '1', tone: 'rojo' },
+            { value: '2', tone: 'rojo' },
+            { value: '3', tone: 'amarillo' },
+            { value: '4', tone: 'verde' },
+            { value: '5', tone: 'verde' },
+        ];
+
+        return '<div class="siga-score-scale" role="radiogroup" aria-label="' + escapeAttribute(name) + '">' + levels.map(function (level) {
+            const checked = level.value === selectedValue ? ' checked' : '';
+            return '<label class="siga-score-scale__option siga-score-scale__option--' + level.tone + '">' +
+                '<input type="radio" name="' + name + '" value="' + level.value + '"' + checked + ' required>' +
+                '<span>' + level.value + '</span>' +
+                '</label>';
+        }).join('') + '</div><small class="siga-score-scale__legend">1-2 rojo, 3 amarillo, 4-5 verde.</small>';
+    }
+
+    function formatClaseLabel(item) {
+        if (item.clase) {
+            const alumno = item.clase.alumno
+                ? item.clase.alumno.nombre + ' ' + item.clase.alumno.apellido
+                : 'Alumno #' + item.clase.alumno_id;
+
+            if (item.clase.fecha && item.clase.hora) {
+                return escapeHtml(item.clase.fecha + ' ' + item.clase.hora + ' Â· ' + alumno);
+            }
+        }
+
+        return 'Clase ' + escapeHtml(String(item.clase_id));
+    }
+
+    function renderEvaluacionMetrics(item) {
+        const metricas = [
+            { key: 'senales', label: 'Senales' },
+            { key: 'frenado', label: 'Frenado' },
+            { key: 'seguridad', label: 'Seguridad' },
+        ];
+
+        return '<div class="siga-eval-metrics">' + metricas.map(function (metrica) {
+            const value = Number(item[metrica.key]);
+            return '<div class="siga-eval-metrics__item">' +
+                '<span>' + metrica.label + '</span>' +
+                '<strong class="siga-eval-metrics__value siga-eval-metrics__value--' + metricTone(value) + '">' + escapeHtml(String(item[metrica.key])) + '/5</strong>' +
+                '</div>';
+        }).join('') + '</div>';
+    }
+
+    function renderTrafficLight(level) {
+        const levels = ['rojo', 'amarillo', 'verde'];
+        return '<div class="siga-traffic-light" aria-label="Nivel ' + escapeAttribute(level) + '">' + levels.map(function (item) {
+            const active = item === level ? ' siga-traffic-light__lamp--active' : '';
+            return '<span class="siga-traffic-light__lamp siga-traffic-light__lamp--' + item + active + '"></span>';
+        }).join('') + '</div>';
+    }
+
+    function metricTone(value) {
+        if (value <= 2) {
+            return 'rojo';
+        }
+
+        if (value >= 4) {
+            return 'verde';
+        }
+
+        return 'amarillo';
+    }
+
     function singularLabel(name) {
         const labels = {
             alumnos: 'alumno',
@@ -1048,7 +1189,7 @@
     }
 
     function cardTemplate(title, body, actions) {
-        return '<article class="siga-stack__item"><strong>' + title + '</strong><p>' + body + '</p>' + (actions || '') + '</article>';
+        return '<article class="siga-stack__item"><strong>' + title + '</strong><div class="siga-stack__body">' + body + '</div>' + (actions || '') + '</article>';
     }
 
     function pill(status) {

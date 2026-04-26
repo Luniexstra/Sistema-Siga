@@ -43,7 +43,7 @@
                         <span>Verificacion</span>
                         <div class="siga-captcha">
                             <div class="siga-captcha__question">
-                                {{ session('captcha_question', $captchaQuestion) }}
+                                {{ $captchaQuestion }}
                             </div>
                             <input type="text" name="captcha" inputmode="numeric" autocomplete="off" placeholder="Respuesta" required>
                         </div>

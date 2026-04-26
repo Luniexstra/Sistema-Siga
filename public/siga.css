@@ -147,6 +147,16 @@ body.siga-shell {
 .siga-field--wide { grid-column: 1 / -1; }
 .siga-field span { font-size: 0.82rem; font-weight: 700; color: #4b3d58; }
 .siga-field input, .siga-field select, .siga-field textarea { width: 100%; padding: 0.9rem 1rem; border: 1px solid rgba(85, 63, 101, 0.18); border-radius: 1rem; background: rgba(255, 255, 255, 0.9); }
+.siga-score-scale { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.55rem; }
+.siga-score-scale__option { position: relative; display: block; }
+.siga-score-scale__option input { position: absolute; opacity: 0; pointer-events: none; }
+.siga-score-scale__option span { display: flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0.7rem 0.5rem; border: 1px solid rgba(85, 63, 101, 0.14); border-radius: 1rem; color: #fff8f2; font-size: 1rem; font-weight: 800; cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, border-color 0.18s ease; }
+.siga-score-scale__option--rojo span { background: linear-gradient(180deg, #d85c56, #9f2f2f); }
+.siga-score-scale__option--amarillo span { background: linear-gradient(180deg, #f0ca53, #c28f16); color: #4f3500; }
+.siga-score-scale__option--verde span { background: linear-gradient(180deg, #39c88f, #1f8a62); }
+.siga-score-scale__option input:checked + span { transform: translateY(-1px); border-color: rgba(28, 21, 35, 0.36); box-shadow: 0 14px 24px rgba(33, 23, 38, 0.16), 0 0 0 3px rgba(255, 255, 255, 0.72) inset; filter: saturate(1.18) brightness(1.05); }
+.siga-score-scale__option:hover span { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(33, 23, 38, 0.12); }
+.siga-score-scale__legend { color: var(--siga-muted); font-size: 0.8rem; }
 .siga-form-feedback { padding: 0.85rem 1rem; border-radius: 1rem; font-size: 0.92rem; line-height: 1.45; }
 .siga-form-feedback.is-error { color: #8f2225; background: rgba(185, 63, 65, 0.12); border: 1px solid rgba(185, 63, 65, 0.18); }
 .siga-form-feedback.is-success { color: var(--siga-green); background: rgba(31, 138, 98, 0.12); border: 1px solid rgba(31, 138, 98, 0.18); }
@@ -163,6 +173,7 @@ body.siga-shell {
 .siga-log { display: grid; gap: 0.8rem; }
 .siga-log__item, .siga-stack__item, .siga-account__card { padding: 0.95rem 1rem; border: 1px solid rgba(87, 64, 110, 0.1); border-radius: 1rem; background: rgba(255, 255, 255, 0.78); }
 .siga-log__item strong, .siga-stack__item strong, .siga-account__card strong { display: block; margin-bottom: 0.25rem; }
+.siga-stack__body p { margin: 0.15rem 0 0; color: var(--siga-muted); }
 .siga-report-list, .siga-report-grid { display: grid; gap: 0.85rem; }
 .siga-report-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .siga-report-table { display: grid; gap: 0.75rem; }
@@ -178,6 +189,24 @@ body.siga-shell {
 .siga-report-row__meta { display: grid; gap: 0.2rem; }
 .siga-report-row__aside { text-align: right; }
 .siga-row-actions { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.8rem; }
+.siga-eval-card__summary { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.85rem; }
+.siga-eval-card__summary strong { margin: 0; font-size: 1.02rem; }
+.siga-traffic-light { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; align-items: center; width: min(260px, 100%); padding: 0.8rem 1rem; margin-bottom: 0.9rem; border: 1px solid rgba(32, 23, 39, 0.14); border-radius: 999px; background: linear-gradient(180deg, #2f343a, #1d2126); box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.08), 0 14px 24px rgba(17, 13, 19, 0.16); }
+.siga-traffic-light__lamp { display: block; width: 100%; aspect-ratio: 1 / 1; border-radius: 999px; opacity: 0.28; filter: saturate(0.65); box-shadow: inset 0 -8px 14px rgba(0, 0, 0, 0.28); transition: opacity 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; }
+.siga-traffic-light__lamp--rojo { background: radial-gradient(circle at 35% 35%, #ffb7b0, #d74840 55%, #7d1d1b 100%); }
+.siga-traffic-light__lamp--amarillo { background: radial-gradient(circle at 35% 35%, #fff5bf, #efc83e 55%, #8d6510 100%); }
+.siga-traffic-light__lamp--verde { background: radial-gradient(circle at 35% 35%, #c7ffe5, #31b37e 55%, #136748 100%); }
+.siga-traffic-light__lamp--active { opacity: 1; filter: saturate(1.22) brightness(1.08); transform: scale(1.03); }
+.siga-traffic-light__lamp--rojo.siga-traffic-light__lamp--active { box-shadow: 0 0 18px rgba(219, 80, 70, 0.88), 0 0 34px rgba(219, 80, 70, 0.44), inset 0 -6px 10px rgba(85, 10, 12, 0.34); }
+.siga-traffic-light__lamp--amarillo.siga-traffic-light__lamp--active { box-shadow: 0 0 18px rgba(255, 208, 78, 0.92), 0 0 34px rgba(255, 208, 78, 0.46), inset 0 -6px 10px rgba(120, 86, 9, 0.28); }
+.siga-traffic-light__lamp--verde.siga-traffic-light__lamp--active { box-shadow: 0 0 18px rgba(56, 200, 140, 0.92), 0 0 34px rgba(56, 200, 140, 0.46), inset 0 -6px 10px rgba(10, 90, 54, 0.28); }
+.siga-eval-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; }
+.siga-eval-metrics__item { padding: 0.8rem 0.9rem; border: 1px solid rgba(87, 64, 110, 0.08); border-radius: 1rem; background: rgba(255, 255, 255, 0.7); }
+.siga-eval-metrics__item span { display: block; color: var(--siga-muted); font-size: 0.8rem; margin-bottom: 0.2rem; }
+.siga-eval-metrics__value { font-size: 1rem; }
+.siga-eval-metrics__value--rojo { color: var(--siga-red); }
+.siga-eval-metrics__value--amarillo { color: #a97800; }
+.siga-eval-metrics__value--verde { color: var(--siga-green); }
 .siga-table { width: 100%; border-collapse: collapse; }
 .siga-table th, .siga-table td { padding: 0.85rem 0.75rem; border-bottom: 1px solid rgba(87, 64, 110, 0.08); text-align: left; font-size: 0.92rem; }
 .siga-table__hint { color: var(--siga-muted); font-size: 0.84rem; }
@@ -215,4 +244,6 @@ body.siga-shell {
     .siga-form-grid, .siga-stats { grid-template-columns: 1fr; }
     .siga-cards-grid { grid-template-columns: 1fr; }
     .siga-modal__body { grid-template-columns: 1fr; }
+    .siga-score-scale, .siga-eval-metrics { grid-template-columns: 1fr; }
+    .siga-traffic-light { width: 100%; }
 }
