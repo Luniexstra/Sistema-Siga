@@ -4,6 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Restablecer contrasena | SIGA</title>
+        <link rel="icon" type="image/png" href="{{ asset('siga-logo.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('siga-logo.png') }}">
         <link rel="stylesheet" href="{{ asset('siga.css') }}">
     </head>
     <body class="siga-shell siga-auth-shell">

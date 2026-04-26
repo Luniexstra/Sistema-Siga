@@ -4,6 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ $title ?? 'SIGA' }}</title>
+        <link rel="icon" type="image/png" href="{{ asset('siga-logo.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('siga-logo.png') }}">
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @else
@@ -23,7 +25,9 @@
         >
             <aside class="siga-sidebar">
                 <div class="siga-brand">
-                    <div class="siga-brand__mark">S</div>
+                    <div class="siga-brand__mark">
+                        <img src="{{ asset('siga-logo.png') }}" alt="SIGA">
+                    </div>
                     <div>
                         <p class="siga-eyebrow">Gestion academica</p>
                         <h1>SIGA</h1>
