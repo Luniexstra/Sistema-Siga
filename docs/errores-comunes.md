@@ -11,7 +11,7 @@ Resumen de defectos detectados.
 | ID | Modulo | Defecto | Severidad | Estado |
 | --- | --- | --- | --- | --- |
 | DEF-01 | Agenda | La edicion permite guardar fechas pasadas, fines de semana, festivos y horarios fuera de rango | Alta | Corregido |
-| DEF-02 | Agenda | La edicion permite duplicar una clase en la misma fecha y hora | Alta | Fallido |
+| DEF-02 | Clases | La edicion permite duplicar una clase en la misma fecha y hora | Alta | Corregido |
 | DEF-03 | Agenda | El formulario de nueva clase tiene HTML mal escrito y Flatpickr no se enlaza correctamente | Media | Fallido |
 | DEF-04 | Alumnos | La edicion de alumno no valida CURP ni correo como unicos | Alta | Fallido |
 | DEF-05 | Alumnos | La eliminacion de alumno borra tambien sus clases por cascada | Alta | Fallido |
@@ -71,8 +71,8 @@ No syntax errors detected in app\Http\Controllers\AgendaController.php
 
 ## DEF-02. La edicion permite duplicar horarios
 
-**Modulo:** Agenda  
-**Archivo relacionado:** `app/Http/Controllers/AgendaController.php`  
+**Modulo:** Clases  
+**Archivo relacionado:** `app/Http/Controllers/ClaseController.php`  
 **Metodo relacionado:** `update`
 
 **Descripcion:**  
@@ -96,6 +96,26 @@ La consulta que revisa horarios ocupados solo existe en el metodo `store`, no en
 
 **Recomendacion:**  
 Agregar validacion de duplicados en `update`, ignorando el registro que se esta editando. Tambien se recomienda crear una restriccion unica en base de datos para `fecha` y `hora`.
+
+**Correccion aplicada:**  
+En el repo real `Sistema-Siga`, el modulo correspondiente es `Clases`. El archivo `app/Http/Controllers/ClaseController.php` ya valida choques de horario al crear y editar clases. En `update`, las consultas de conflicto usan `where('id', '!=', $clase->id)` para ignorar la clase que se esta editando y evitar falsos positivos.
+
+**Evidencia tecnica:**  
+El controlador revisa duplicados por instructor y por alumno:
+
+```php
+$conflictoInstructor = Clase::where('fecha', $payload['fecha'])
+    ->where('hora', $payload['hora'])
+    ->where('instructor_id', $payload['instructor_id'])
+    ->where('id', '!=', $clase->id)
+    ->exists();
+
+$conflictoAlumno = Clase::where('fecha', $payload['fecha'])
+    ->where('hora', $payload['hora'])
+    ->where('alumno_id', $payload['alumno_id'])
+    ->where('id', '!=', $clase->id)
+    ->exists();
+```
 
 ## DEF-03. El selector de fecha y hora no se activa correctamente en nueva clase
 
