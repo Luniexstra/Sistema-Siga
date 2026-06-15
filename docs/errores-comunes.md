@@ -12,7 +12,6 @@ Resumen de defectos detectados.
 | --- | --- | --- | --- | --- |
 | DEF-01 | Agenda | La edicion permite guardar fechas pasadas, fines de semana, festivos y horarios fuera de rango | Alta | Corregido |
 | DEF-02 | Clases | La edicion permite duplicar una clase en la misma fecha y hora | Alta | Corregido |
-| DEF-03 | Agenda | El formulario de nueva clase tiene HTML mal escrito y Flatpickr no se enlaza correctamente | Media | Fallido |
 | DEF-04 | Alumnos | La edicion de alumno no valida CURP ni correo como unicos | Alta | Fallido |
 | DEF-05 | Alumnos | La eliminacion de alumno borra tambien sus clases por cascada | Alta | Fallido |
 | DEF-06 | Registros | El modulo registros guarda datos vacios o correos invalidos | Media | Fallido |
@@ -116,36 +115,6 @@ $conflictoAlumno = Clase::where('fecha', $payload['fecha'])
     ->where('id', '!=', $clase->id)
     ->exists();
 ```
-
-## DEF-03. El selector de fecha y hora no se activa correctamente en nueva clase
-
-**Modulo:** Agenda  
-**Archivo relacionado:** `resources/views/agenda/create.blade.php`
-
-**Descripcion:**  
-El formulario de nueva clase incluye Flatpickr para controlar fecha y hora, pero los campos no tienen los identificadores que el script busca. Ademas, el campo de fecha tiene un error de escritura en HTML.
-
-**Pasos para reproducir:**
-1. Entrar a `/agenda/create`.
-2. Revisar el campo de fecha.
-3. Revisar si se carga el selector personalizado de fecha y hora.
-4. Inspeccionar el HTML de la pagina.
-
-**Resultado obtenido:**  
-El calendario puede no activarse correctamente y el HTML queda mal formado por el doble signo `<`.
-
-**Resultado esperado:**  
-El campo fecha y el campo hora deben estar conectados al script de Flatpickr para bloquear fechas y horas no permitidas desde la interfaz.
-
-**Causa probable:**  
-El script usa `flatpickr("#fecha", ...)` y `flatpickr("#hora", ...)`, pero los inputs no tienen esos `id`. Tambien existe esta linea:
-
-```html
-<<input type="date" name="fecha" value="{{ request('fecha') }}">
-```
-
-**Recomendacion:**  
-Corregir el HTML y agregar `id="fecha"` e `id="hora"` en los campos correspondientes.
 
 ## DEF-04. La edicion de alumno no valida CURP ni correo como unicos
 
