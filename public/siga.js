@@ -572,7 +572,7 @@
             return;
         }
 
-        const password = window.prompt('Escribe tu contrasena para confirmar la eliminacion');
+        const password = window.prompt('Escribe la contrasena del administrador conectado para confirmar la eliminacion');
 
         if (!password) {
             return;

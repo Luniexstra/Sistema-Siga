@@ -192,7 +192,7 @@ Estados:
 
 ### 5.7 Eliminaciones protegidas
 
-- alumnos y usuarios solicitan la contrasena actual antes de eliminar registros
+- alumnos y usuarios solicitan la contrasena actual del usuario conectado antes de eliminar registros
 - si la contrasena es incorrecta, el sistema conserva el registro y muestra un error de validacion
 
 ## 6. Seguridad

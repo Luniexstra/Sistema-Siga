@@ -374,7 +374,7 @@ class SigaApiTest extends TestCase
             ]);
 
         $deleteResponse->assertUnprocessable()
-            ->assertJsonPath('message', 'La contrasena no es correcta.');
+            ->assertJsonPath('message', 'La contrasena del usuario conectado no es correcta.');
 
         $this->assertDatabaseHas('alumnos', ['id' => $alumno->id]);
     }
@@ -395,7 +395,7 @@ class SigaApiTest extends TestCase
             ]);
 
         $failedResponse->assertUnprocessable()
-            ->assertJsonPath('message', 'La contrasena no es correcta.');
+            ->assertJsonPath('message', 'La contrasena del administrador conectado no es correcta.');
 
         $this->assertDatabaseHas('users', ['id' => $usuario->id]);
 

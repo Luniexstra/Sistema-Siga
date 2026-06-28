@@ -99,7 +99,7 @@ class AlumnoController extends Controller
 
         if (! Hash::check($data['password'], $user->password)) {
             return response()->json([
-                'message' => 'La contrasena no es correcta.',
+                'message' => 'La contrasena del usuario conectado no es correcta.',
             ], 422);
         }
 

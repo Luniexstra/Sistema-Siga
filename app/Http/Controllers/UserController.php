@@ -69,7 +69,7 @@ class UserController extends Controller
 
         if (! Hash::check($data['password'], $request->user()->password)) {
             return response()->json([
-                'message' => 'La contrasena no es correcta.',
+                'message' => 'La contrasena del administrador conectado no es correcta.',
             ], 422);
         }
 
