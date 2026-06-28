@@ -572,6 +572,12 @@
             return;
         }
 
+        const password = window.prompt('Escribe tu contrasena para confirmar la eliminacion');
+
+        if (!password) {
+            return;
+        }
+
         if (!window.confirm('Seguro que quieres eliminar este registro?')) {
             return;
         }
@@ -579,6 +585,7 @@
         try {
             await api(config.endpoint + '/' + id, {
                 method: 'DELETE',
+                body: JSON.stringify({ password }),
             });
 
             addLog('Registro eliminado', singularLabel(name) + ' #' + id + ' se elimino correctamente.');

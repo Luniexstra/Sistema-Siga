@@ -24,7 +24,8 @@ Usuario administrador inicial:
 | 2 | Login | Intentar entrar con contrasena incorrecta. | `admin@siga.test` / `ClaveIncorrecta` | El acceso es rechazado. | Se muestra mensaje de error y no entra al panel. | Recomendado agregar prueba. |
 | 3 | Seguridad | Cambiar contrasena desde el panel. | Actual: `Admin12345`, nueva: `NuevaClave123` | La contrasena se actualiza correctamente. | Cerrar sesion e iniciar con la nueva contrasena. | `SecurityFlowTest::test_an_authenticated_user_can_change_their_password` |
 | 4 | Seguridad | Restablecer contrasena con token valido. | Correo de usuario existente. | La nueva contrasena queda guardada. | Iniciar sesion con la nueva contrasena. | `SecurityFlowTest::test_a_user_can_reset_password_with_a_valid_token` |
-| 5 | Roles | Acceder a un modulo no permitido para el rol. | Usuario `recepcionista` intentando crear evaluaciones. | El sistema bloquea la accion. | La interfaz no debe permitir la accion o la API responde prohibido. | `SigaApiTest::test_it_blocks_a_recepcionista_from_creating_evaluaciones` |
+| 5 | Usuarios | Eliminar usuario desde administracion. | Usuario existente y contrasena actual del administrador. | El usuario se elimina solo si la contrasena es correcta. | Con contrasena incorrecta el usuario permanece en el listado. | `SigaApiTest::test_it_requires_current_password_to_delete_a_user` |
+| 6 | Roles | Acceder a un modulo no permitido para el rol. | Usuario `recepcionista` intentando crear evaluaciones. | El sistema bloquea la accion. | La interfaz no debe permitir la accion o la API responde prohibido. | `SigaApiTest::test_it_blocks_a_recepcionista_from_creating_evaluaciones` |
 
 ## Segundo Set de Pruebas: Alumnos
 
@@ -32,7 +33,7 @@ Usuario administrador inicial:
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Alumnos | Registrar un alumno con campos obligatorios. | Nombre, apellido, CURP, telefono, correo, fecha de ingreso y costo total. | El alumno se guarda correctamente. | El alumno aparece en la tabla/listado de alumnos. | `SigaApiTest::test_it_creates_an_alumno_with_required_fields` |
 | 2 | Alumnos | Editar datos generales de un alumno. | Cambiar nombre o costo total. | La informacion se actualiza. | Abrir el registro y verificar los nuevos datos. | `SigaApiTest::test_it_updates_and_deletes_an_alumno` |
-| 3 | Alumnos | Eliminar un alumno. | Alumno existente. | El registro se elimina. | El alumno ya no aparece en el listado. | `SigaApiTest::test_it_updates_and_deletes_an_alumno` |
+| 3 | Alumnos | Eliminar un alumno. | Alumno existente y contrasena actual del usuario. | El registro se elimina solo si la contrasena es correcta. | El alumno ya no aparece en el listado; con contrasena incorrecta debe conservarse. | `SigaApiTest::test_it_updates_and_deletes_an_alumno`, `SigaApiTest::test_it_requires_current_password_to_delete_an_alumno` |
 | 4 | Perfil alumno | Alumno modifica solo campos permitidos. | Cambiar telefono y correo; intentar cambiar nombre o costo total. | Solo se actualizan telefono y correo. | Verificar que nombre y costo total no cambian. | `SigaApiTest::test_an_alumno_can_only_update_allowed_profile_fields` |
 
 ## Tercer Set de Pruebas: Clases

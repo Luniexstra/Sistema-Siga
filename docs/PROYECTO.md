@@ -188,6 +188,12 @@ Estados:
 
 - solo administracion gestiona usuarios
 - un usuario no puede eliminar su propia cuenta mientras esta autenticado
+- para eliminar un usuario se debe confirmar la contrasena actual del administrador
+
+### 5.7 Eliminaciones protegidas
+
+- alumnos y usuarios solicitan la contrasena actual antes de eliminar registros
+- si la contrasena es incorrecta, el sistema conserva el registro y muestra un error de validacion
 
 ## 6. Seguridad
 

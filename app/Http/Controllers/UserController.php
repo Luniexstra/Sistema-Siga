@@ -63,6 +63,16 @@ class UserController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        $data = $request->validate([
+            'password' => ['required', 'string'],
+        ]);
+
+        if (! Hash::check($data['password'], $request->user()->password)) {
+            return response()->json([
+                'message' => 'La contrasena no es correcta.',
+            ], 422);
+        }
+
         $user = User::findOrFail($id);
 
         if ((int) $request->user()->id === (int) $user->id) {

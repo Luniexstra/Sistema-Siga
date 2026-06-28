@@ -344,10 +344,68 @@ class SigaApiTest extends TestCase
             ->assertJsonPath('costo_total', 3000);
 
         $deleteResponse = $this->withHeaders($this->apiHeadersFor($recepcionista))
-            ->deleteJson('/api/alumnos/' . $alumno->id);
+            ->deleteJson('/api/alumnos/' . $alumno->id, [
+                'password' => 'password',
+            ]);
 
         $deleteResponse->assertOk();
         $this->assertDatabaseMissing('alumnos', ['id' => $alumno->id]);
+    }
+
+    public function test_it_requires_current_password_to_delete_an_alumno(): void
+    {
+        $recepcionista = User::factory()->create([
+            'role' => User::ROLE_RECEPCIONISTA,
+        ]);
+
+        $alumno = Alumno::create([
+            'nombre' => 'Mario',
+            'apellido' => 'Rios',
+            'curp' => 'RIMX800101HDFABC15',
+            'telefono' => '5550001111',
+            'correo' => 'mario@example.com',
+            'fecha_ingreso' => '2026-04-16',
+            'costo_total' => 2500,
+        ]);
+
+        $deleteResponse = $this->withHeaders($this->apiHeadersFor($recepcionista))
+            ->deleteJson('/api/alumnos/' . $alumno->id, [
+                'password' => 'incorrecta',
+            ]);
+
+        $deleteResponse->assertUnprocessable()
+            ->assertJsonPath('message', 'La contrasena no es correcta.');
+
+        $this->assertDatabaseHas('alumnos', ['id' => $alumno->id]);
+    }
+
+    public function test_it_requires_current_password_to_delete_a_user(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMINISTRADOR,
+        ]);
+
+        $usuario = User::factory()->create([
+            'role' => User::ROLE_ALUMNO,
+        ]);
+
+        $failedResponse = $this->withHeaders($this->apiHeadersFor($admin))
+            ->deleteJson('/api/users/' . $usuario->id, [
+                'password' => 'incorrecta',
+            ]);
+
+        $failedResponse->assertUnprocessable()
+            ->assertJsonPath('message', 'La contrasena no es correcta.');
+
+        $this->assertDatabaseHas('users', ['id' => $usuario->id]);
+
+        $deleteResponse = $this->withHeaders($this->apiHeadersFor($admin))
+            ->deleteJson('/api/users/' . $usuario->id, [
+                'password' => 'password',
+            ]);
+
+        $deleteResponse->assertOk();
+        $this->assertDatabaseMissing('users', ['id' => $usuario->id]);
     }
 
     public function test_an_instructor_can_update_and_delete_an_evaluacion(): void

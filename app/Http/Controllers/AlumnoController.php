@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Alumno;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class AlumnoController extends Controller
@@ -90,8 +91,20 @@ class AlumnoController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        $data = $request->validate([
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = $this->currentUser($request);
+
+        if (! Hash::check($data['password'], $user->password)) {
+            return response()->json([
+                'message' => 'La contrasena no es correcta.',
+            ], 422);
+        }
+
         $alumno = Alumno::findOrFail($id);
-        $this->ensureAlumnoOwnership($this->currentUser($request), $alumno);
+        $this->ensureAlumnoOwnership($user, $alumno);
         $alumno->delete();
 
         return response()->json(['mensaje' => 'Eliminado']);
